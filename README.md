@@ -1,2 +1,2 @@
-# oficina_mecanica_db
+# livraria_db
 Progamando um sistema de cadastro de uma oficina.
