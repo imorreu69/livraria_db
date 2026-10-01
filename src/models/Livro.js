@@ -15,5 +15,7 @@ type: DataTypes.INTEGER,
 allowNull: false,
 defaultValue: 0,
 },
+}, {
+tableName: 'livros',
 });
 module.exports = Livro;

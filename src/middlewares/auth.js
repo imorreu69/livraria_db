@@ -9,7 +9,7 @@ function autenticar(req, res, next) {
     });
   }
 
-  const partes = authHeader.split(' ');
+  const partes = authHeader.trim().split(/\s+/);
 
   if (
     partes.length !== 2 ||
@@ -28,6 +28,7 @@ function autenticar(req, res, next) {
       process.env.JWT_SECRET
     );
 
+    req.usuario = dados;
     req.cliente = dados;
 
     next();

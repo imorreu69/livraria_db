@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const Sequelize = require('../config/database');
+const sequelize = require('../config/database');
 const Livro = require('./Livro');
-const Usuario = require ('./Usuario');
+const Usuario = require('./Usuario');
 
 const Movimentacao = sequelize.define('Movimentacao', {
     tipo: {
@@ -16,11 +16,16 @@ const Movimentacao = sequelize.define('Movimentacao', {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     },
+    usuario_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
+}, {
+    tableName: 'movimentacaos',
 });
 
 Livro.hasMany(Movimentacao, { foreignKey: 'livro_id' });
 Movimentacao.belongsTo(Livro, { foreignKey: 'livro_id' });
-Usuario.hasMany(Movimentacao, {foreignKey:'usuario_id'})
-Movimentacao.belongsTo(Usuario, {foreignKey: 'usuario_id'});
-
+Usuario.hasMany(Movimentacao, { foreignKey: 'usuario_id' });
+Movimentacao.belongsTo(Usuario, { foreignKey: 'usuario_id' });
 module.exports = Movimentacao;

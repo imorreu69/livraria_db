@@ -8,20 +8,14 @@ async function cadastrar(req, res) {
       nome,
       email,
       senha,
-      telefone,
-      modeloVeiculo,
-      placa,
-      anoVeiculo
+      tipo
     } = req.body;
 
     if (
       !nome ||
       !email ||
-      !senha ||
-      !telefone ||
-      !modeloVeiculo ||
-      !placa ||
-      !anoVeiculo
+      !senha || 
+      !tipo
     ) {
       return res.status(400).json({
         mensagem: 'Todos os campos são obrigatórios'
@@ -30,13 +24,13 @@ async function cadastrar(req, res) {
 
     const clienteExistente = await Cliente.findOne({
       where: {
-        [Op.or]: [{ email }, { placa }]
+        [Op.or]: [{ email }]
       }
     });
 
     if (clienteExistente) {
       return res.status(409).json({
-        mensagem: 'Email ou placa já cadastrados'
+        mensagem: 'Email já cadastrados'
       });
     }
 
@@ -45,11 +39,8 @@ async function cadastrar(req, res) {
     const cliente = await Cliente.create({
       nome,
       email,
-      senha: senhaHash,
-      telefone,
-      modeloVeiculo,
-      placa: placa.toUpperCase(),
-      anoVeiculo
+      tipo,
+      senha: senhaHash
     });
 
     return res.status(201).json({
@@ -57,11 +48,8 @@ async function cadastrar(req, res) {
       cliente: {
         id: cliente.id,
         nome: cliente.nome,
-        email: cliente.email,
-        telefone: cliente.telefone,
-        modeloVeiculo: cliente.modeloVeiculo,
-        placa: cliente.placa,
-        anoVeiculo: cliente.anoVeiculo
+        tipo: cliente.tipo,
+        email: cliente.email
       }
     });
 

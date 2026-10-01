@@ -5,6 +5,12 @@ async function cadastrar(req, res) {
     try {
         const { livro_id, tipo, quantidade } = req.body;
 
+        if (!Number.isInteger(quantidade) || quantidade <= 0) {
+            return res.status(400).json({
+                mensagem: 'A quantidade deve ser um número inteiro maior que zero',
+            });
+        }
+
         const livro = await Livro.findByPk(livro_id);
         if (!livro) {
             return res.status(404).json({
@@ -28,6 +34,7 @@ async function cadastrar(req, res) {
             livro_id,
             tipo,
             quantidade,
+            usuario_id: req.usuario.id,
         });
 
         res.status(201).json(movimentacao);

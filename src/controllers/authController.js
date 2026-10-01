@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const Cliente = require('../models/Cliente');
+const Usuario = require('../models/Usuario');
 
 async function login(req, res) {
   try {
@@ -12,11 +12,11 @@ async function login(req, res) {
       });
     }
 
-    const cliente = await Cliente.findOne({
+    const usuario = await Usuario.findOne({
       where: { email }
     });
 
-    if (!cliente) {
+    if (!usuario) {
       return res.status(401).json({
         mensagem: 'Email ou senha inválidos'
       });
@@ -24,7 +24,7 @@ async function login(req, res) {
 
     const senhaConfere = await bcrypt.compare(
       senha,
-      cliente.senha
+      usuario.senha
     );
 
     if (!senhaConfere) {
@@ -34,7 +34,7 @@ async function login(req, res) {
     }
 
     const token = jwt.sign(
-      { id: cliente.id },
+      { id: usuario.id, tipo: usuario.tipo },
       process.env.JWT_SECRET,
       { expiresIn: '8h' }
     );

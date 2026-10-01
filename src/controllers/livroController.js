@@ -1,5 +1,5 @@
 const Livro = require('../models/Livro');
-const {Op} = require ('sequelize');
+const { Op } = require('sequelize');
 async function cadastrar(req, res) {
     try {
         const livro = await Livro.create(req.body);
@@ -15,16 +15,37 @@ async function cadastrar(req, res) {
 async function listar(req, res) {
     try {
         const { pagina = 1, limite = 10, nome, data } = req.query;
+        const paginaNumerica = Number(pagina);
+        const limiteNumerico = Number(limite);
         const filtro = {};
+
+        if (!Number.isInteger(paginaNumerica) || paginaNumerica < 1 ||
+            !Number.isInteger(limiteNumerico) || limiteNumerico < 1) {
+            return res.status(400).json({
+                mensagem: 'Pagina e limite devem ser números inteiros positivos',
+            });
+        }
 
         if (nome) {
             filtro.titulo = { [Op.like]: `%${nome}%` };
         }
 
+        if (data) {
+            const dataInicial = new Date(data);
+
+            if (Number.isNaN(dataInicial.getTime())) {
+                return res.status(400).json({
+                    mensagem: 'Data inválida',
+                });
+            }
+
+            filtro.createdAt = { [Op.gte]: dataInicial };
+        }
+
         const livros = await Livro.findAll({
             where: filtro,
-            limit: Number(limite),
-            offset: (Number(pagina) - 1) * Number(limite),
+            limit: limiteNumerico,
+            offset: (paginaNumerica - 1) * limiteNumerico,
         });
 
         res.json(livros);
@@ -44,7 +65,7 @@ async function deletar(req, res) {
 
         if (!livro) {
             return res.status(404).json({
-                mensagem: 'Livro nao encontrado',
+                mensagem: 'Livro não encontrado',
             });
         }
 
@@ -62,4 +83,4 @@ async function deletar(req, res) {
     }
 }
 
-module.exports = {cadastrar, listar, deletar};
+module.exports = { cadastrar, listar, deletar };
